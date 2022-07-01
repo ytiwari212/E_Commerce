@@ -142,6 +142,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_ROOT = PROJECT_APPS.child('media')
+
+MEDIA_URL = '/media/'
+
+
+# Static files (CSS, JavaScript, Images, Pdf)
+# STATIC_ROOT = PROJECT_APPS.child('static')
+
+STATICFILES_DIRS = [
+   PROJECT_APPS.child("static")
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
