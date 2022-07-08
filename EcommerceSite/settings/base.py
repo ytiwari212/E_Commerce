@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'paypal.standard.ipn'
 ]
 
 MIDDLEWARE = [
@@ -76,6 +77,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+        # 'libraries':{
+        #     'custom_templatetag': 'EcommerceSite.templatetags.cart',
+
+        #     }
         },
     },
 ]
@@ -159,3 +164,11 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
+
+
+
+LOGOUT_REDIRECT_URL = 'home/'
+
+PAYPAL_RECEIVER_EMAIL = 'youremail@mail.com'
+
+PAYPAL_TEST = True
