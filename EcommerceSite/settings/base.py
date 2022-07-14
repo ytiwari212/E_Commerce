@@ -165,10 +165,31 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'shubham.thoughtwin@gmail.com'
+# EMAIL_HOST_PASSWORD = 'osfapvbgpeneopid'
+
+DEFAULT_FROM_EMAIL='noreply@postyourcars.com'
+FROM_EMAIL='noreply@postyourcars.com'
+EMAIL_HOST='email-smtp.us-east-2.amazonaws.com'
+EMAIL_HOST_USER='AKIAZY4LX5J6EY7PGHOS'
+EMAIL_HOST_PASSWORD='BOA8LJdyGOzZrLcl3PcyCkh1aSpsRmEBOKmcmXvdew+i'
+# DEFAULT_FROM_EMAIL = 'shubham.thoughtwin@gmail.com'
+
+
+API_KEY="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"
 
 LOGOUT_REDIRECT_URL = 'home/'
 
 PAYPAL_RECEIVER_EMAIL = 'youremail@mail.com'
 
 PAYPAL_TEST = True
+
+
+PAYPAL_CLIENT_ID = "ASILJdz-nMq6J9xxFYdCn37J7fsV-ibbnw10NWJaI9JgXtjTEPojrMB5_wnKwqd5Z6BG4Hf7qqig2u9e"
+PAYPAL_SECRET_KEY = "EMUweYiU8M2g749qAHPpjzCAFJ2eFmyY_6SLjtEFfXT4uKRkcf_mSai53nJp0aJJ7Pc7i5w6j6_edDXp"

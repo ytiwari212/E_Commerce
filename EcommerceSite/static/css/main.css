@@ -187,7 +187,6 @@ a#scrollUp i{
 
 
 .shop-menu ul li {
-	display:inline-block;
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -866,7 +865,9 @@ h2.title {
 	font-family: 'Roboto', sans-serif;
 	font-size: 24px;
 	font-weight: 700;
+
 }
+
 .product-overlay h2{
 	color: #fff;
 	font-family: 'Roboto', sans-serif;
@@ -2521,3 +2522,16 @@ h2.title {
 }
 
 
+.admin-li{
+  color: #fff !important;
+  background-color: #666666 !important;
+
+}
+
+.admin-li:hover{
+  color: yellowgreen !important;
+}
+
+.admin-sub-menu:hover ;{
+  "display: flex;
+    flex-direction: column"}

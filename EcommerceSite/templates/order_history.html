@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart %}
+{% load custom_filter %}
+{% block content %}
+	<section id="cart_items">
+		<div class="container">
+			<div class="breadcrumbs">
+				<ol class="breadcrumb">
+				  <li><a href="#">Home</a></li>
+				  <li class="active">Shopping Cart</li>
+				</ol>
+			</div>
+			{%if all_order_product %}
+			<h3 align="center">My Orders</h3>
+			{% endif %}
+			<div class="table-responsive cart_info">
+				{%if all_order_product %}
+				<table class="table table-condensed">
+					<thead>
+						<tr class="cart_menu">
+							<td class="image">Item</td>
+							<td class="description"></td>
+							<td class="price">Price</td>
+							<td class="quantity">Quantity</td>
+							<td class="price">Status</td>
+							<!--<td class="total">Total</td>-->
+							<!--<td></td>-->
+						</tr>
+					</thead>
+					<tbody>
+						{% for or_product in all_order_product %}
+						<tr>
+							<td class="cart_product">
+								{% for pr_mg in  or_product.product.product_image.all %}
+								<img src="{{pr_mg.image.url}}" width="110" height="110" alt="" />
+								{% endfor %}
+							</td>
+							<td class="cart_description">
+								<h4><a href="">Order ID : {{or_product.order.id}}</a></h4>
+								<h4><a href="">{{or_product.product.name}}</a></h4>
+								<p>{{or_product.product.description}}</p>
+							</td>
+							<td class="cart_price">
+								<p>{{or_product.product.price}}</p>
+							</td>
+							<td class="cart_quantity">
+								<p>{{or_product.quantity}}</p>
+							</td>
+							<td class="cart_price">
+								<p>{{or_product.order.status}}</p>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% else %}
+					<h3 align="center">No Order Yet</h1>
+				{%endif%}
+			</div>
+		</div>
+	</section> <!--/#cart_items-->
+
+
+
+{% endblock %}

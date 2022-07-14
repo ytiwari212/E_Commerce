@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart %}
+{% load custom_filter %}
+{% block content %}
+	<section id="cart_items">
+		<div class="container">
+			<div class="breadcrumbs">
+				<ol class="breadcrumb">
+				  <li><a href="#">Home</a></li>
+				  <li class="active">Shopping Cart</li>
+				</ol>
+			</div>
+			<div class="table-responsive cart_info">
+					<h3 align="center">Hello Dear {{order.customer.username}} </h3>
+					<h4 align="center">Your Payment Is Done and Your Order Will Be Delivered At {{order_delivery_date}}</h4>
+			</div>
+		</div>
+	</section> <!--/#cart_items-->
+{% endblock %}

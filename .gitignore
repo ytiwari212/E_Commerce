@@ -1,4 +1,4 @@
-# media/
+media/
 *.pyc
 collected_static/
 EcommerceSite/settings/local.py

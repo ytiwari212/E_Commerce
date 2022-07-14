@@ -95,9 +95,12 @@
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav ">
                                 {% if request.user.is_authenticated %}
-                                    <li class="dropdown"><a href="#">{{request.user.username}}<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="{% url 'core:logout' %}">Logout</a></li>
+                                    <li class="dropdown">
+                                        <a href="#">{{request.user.username}}<i class="fa fa-angle-down"></i>
+                                        </a>
+                                        <ul   role="menu" class="sub-menu admin-sub-menu">
+                                        <li ><a class="admin-li"  href="{% url 'core:logout' %}">Logout</a></li>
+                                        <li ><a class="admin-li" href="{% url 'core:order_history' %}">order history</a></li> 
                                         </ul>
                                     </li> 
                                 <!--<li><a href="#"><i class="fa fa-user"></i> {{request.user.username}}</a></li>-->

@@ -191,34 +191,35 @@
 					<h2 class="title text-center">Features Items</h2>
 					{% for product in products %}		
 					<div class="col-sm-4">
-						<div class="product-image-wrapper">
-							<div class="single-products">
+						<div id="{{product.id}}" class="product-image-wrapper">
+							<div   class="single-products">
 								<div class="productinfo text-center">
 									{% for pr_mg in  product.product_image.all %}
 									<img src="{{pr_mg.image.url}}" width="268" height="249" alt="" />
 									{% endfor %}
 									<h2>{{product.price}}</h2>
 									<p>{{product.name}}</p>
+									<p>{{product.description}}</p>
 									<!--<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>-->
 									{% if product|is_in_cart:request.session.cart %}
-									<div class="row no-gutters">
+									<div style="    display: inline-flex;" class="">
 										<form action="/#{{product.id}}" class="col-2 " method="post">
 											{% csrf_token %}
-											<input hidden type="text" name='product' value='{{product.id}}'>
+											<input hidden type="text" name='home_product' value='{{product.id}}'>
 											<input hidden type="text" name='remove' value='True'>
 											<input type="submit" value=" - " class="btn btn-warning border-right">
 										</form>
-										<div class="text-center col btn btn-warning">{{product|cart_quantity:request.session.cart}} in Cart</div>
+										<span class="col btn btn-warning">{{product|cart_quantity:request.session.cart}} in Cart</span>
 										<form action="/#{{product.id}}" class="col-2 " method="post">
 											{% csrf_token %}
-											<input hidden type="text" name='product' value='{{product.id}}'>
+											<input hidden type="text" name='home_product' value='{{product.id}}'>
 											<input type="submit" value=" + " class="btn btn-warning border-left">
 										</form>
 									</div>
 									{% else %}
 									<form action="/#{{product.id}}" method="POST" class="btn-block">
 										{% csrf_token %}
-										<input hidden type="text" name='product' value='{{product.id}}'>
+										<input hidden type="text" name='home_product' value='{{product.id}}'>
 										<input type="submit" class="btn btn-default add-to-cart form-control " value="Add To Cart">
 									</form>
 									{% endif %}
