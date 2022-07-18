@@ -4,14 +4,19 @@ from django.contrib.auth import logout
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views import View
 from django.views.generic.base import TemplateView
-from .models import Category, Product, Order, OrderProduct
-from .forms import RegistrationForm, LoginForm
+from .models import Category, Product, Order, OrderProduct,Coupon
+from .forms import RegistrationForm, LoginForm,CouponForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.template.loader import get_template
+from .utils import order_confirmation_mail
+from django.utils import timezone
+from .templatetags.cart import total_cart_price
+from django.db.models import F
 
 
 
@@ -20,6 +25,7 @@ today = datetime.date.today()
 
 class IndexView(View):
     def post(self, request):
+        breakpoint()
         # product = request.POST.get("product")
         cart_product = request.POST.get("cart_product")
         home_product = request.POST.get("home_product")
@@ -56,6 +62,7 @@ class IndexView(View):
         	return redirect("core:cart")
 
     def get(self, request):
+        breakpoint()
         return HttpResponseRedirect(f"products/{request.get_full_path()[1:]}")
 
 
@@ -140,18 +147,25 @@ class LoginView(View):
 class CartView(View):
     def get(self, request):
         products = None
+
         cart = request.session.get("cart")
         if cart:
             ids = list(cart.keys())
             products = Product.get_products_by_id(ids)
-        return render(request, "cart.html", {"products": products})
+            user = request.user
+        return render(request, "cart.html", {"products": products,'user':user})
 
 
 class CheckOut(View):
     def post(self, request):
-        address = request.POST.get("address")
-        phone = request.POST.get("phone")
-        # customer = request.session.get('customer')
+        breakpoint()
+        address_type = request.POST.get('add')
+        if address_type == "1":
+        	address = request.user.address
+        	phone = request.user.mobile_number
+        else:
+	        address = request.POST.get("address")
+	        phone = request.POST.get("phone")
         cart = request.session.get("cart")
         products = Product.objects.filter(id__in=cart.keys())
         order = Order.objects.create(
@@ -161,24 +175,26 @@ class CheckOut(View):
             status="Panding",
             date=today,
         )
+        total_amount = total_cart_price(products,cart)
         for product in products:
             order_product = OrderProduct.objects.create(
                 order=order,
                 product=product,
                 quantity=cart.get(str(product.id)),
                 price=product.price,
+                total_amount=total_amount,
             )
         # request.session['cart'] = {}
         return redirect("core:payment")
 
 
 class PaymentView(View):
-    # template_name = 'checkout.html'
 
     def get(self, request):
         order = None
         cart = request.session.get("cart")
         client_id = settings.PAYPAL_CLIENT_ID
+        coupon = Coupon.objects.filter(user=request.user,valid_from__lte=timezone.now(), valid_to__gte=timezone.now()).last()
         products = Product.objects.filter(id__in=cart.keys())
         order = Order.objects.filter(customer=request.user).last()
         order_product = OrderProduct.objects.filter(
@@ -186,44 +202,55 @@ class PaymentView(View):
         ).last()
         if order_product:
             order = order_product.order
+        if coupon:
+        	final_amount = order_product.total_amount - coupon.amount
         return render(
             request,
             "checkout.html",
-            {"products": products, "client_id": client_id, "order": order},
+            {"products": products,
+            "client_id": client_id,
+            "order": order,
+            "coupon":coupon,
+            "order_product":order_product,
+            "final_amount":final_amount},
         )
 
     def post(self, request):
-        my_json = request.body.decode("utf8").replace("'", '"')
-        data_list = my_json.split("&")
-        PaypalorderID = data_list[0].split("=")[1]
-        status = data_list[1].split("=")[1]
-        transactionID = data_list[2].split("=")[1]
-        order_id = data_list[3].split("=")[1]
-        order = Order.objects.filter(id=order_id, customer=request.user).last()
-        if status == 'COMPLETED':
-            order.status = 'Processing'
+        code = request.POST.get('code')
+        if code:
+            order = Order.objects.filter(customer=request.user).last()
+            breakpoint()
+            coupon = Coupon.objects.filter(code__iexact=code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now()).exclude(user=request.user,max_value__lte=F('used')).first()
+            if not coupon:
+                messages.error(self.request, 'You can\'t use same coupon again, or coupon does not exist')
+                return redirect('core:payment')
+            else:
+                try:
+                    order_product = OrderProduct.objects.filter(order=order)
+                    total_amount = order_product[0].total_amount - coupon.amount
+                    for itm in order_product:
+                    	itm.coupon = coupon
+                    	itm.total_amount = total_amount
+                    	itm.save()
+                    coupon.used += 1
+                    coupon.save()
+                    order.apply_coupon = True
+                    order.save()
+                    messages.success(self.request, "Successfully added coupon")
+                except:
+                    messages.error(self.request, "Max level exceeded for coupon")
+        
+                return redirect('core:payment')
         else:
-            order.status = 'Panding'
-        order.transaction_id = transactionID
-        order.save()
+            my_json = request.body.decode("utf8").replace("'", '"')
+            user = request.user
+            order_mail = order_confirmation_mail(my_json,user)
+            request.session["cart"] = {}
+            return JsonResponse({"success": True, "url": "/payment/done/"})
 
-        subject = "YOUR ORDER"
-        html_body = "Your Payment Is Done and Your Order Will Be Delivered At "
-        from_email='noreply@postyourcars.com'
-        text_content = 'Your Payment Is Done and Your Order Will Be Delivered At '
-        to=['ytiwari212@gmail.com','yashdeep.tiwari@neosoftmail.com']
-        # msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-        # message.attach_alternative(html_body, "text/html")
-        # message.send()
-        send_mail(subject, text_content, from_email, to, fail_silently = False)
-
-
-        request.session["cart"] = {}
-        return JsonResponse({"success": True, "url": "/payment/done/"})
 
 
 class PaymentDoneView(View):
-    # template_name = 'payment_done.html'
 
     def get(self, request):
         order = Order.objects.filter(customer=request.user).last()
@@ -237,7 +264,6 @@ class PaymentDoneView(View):
 
 
 class OrderHistoryView(View):
-    # template_name = 'payment_done.html'
 
     def get(self, request):
         all_order_product = []

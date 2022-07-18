@@ -39,3 +39,6 @@ class LoginForm(forms.Form):
             "username",
             "password",
         )
+
+class CouponForm(forms.Form):
+    code = forms.CharField(label=_("Code"), max_length=30)

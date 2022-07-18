@@ -11,11 +11,81 @@
 				  <li class="active">Shopping Cart</li>
 				</ol>
 			</div>
+			<ul class="messages">
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} 
+                    <div class="alert alert-danger">
+                        <strong>{{ message }}</strong>
+                    </div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                <strong>{{ message }}</strong>
+                            </div>   
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if form.errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if order.apply_coupon == False %}
+			<div style="width: 35%;margin-left: auto;margin-right: auto;" class="table-responsive cart_info">
+				<table class="table table-condensed">
+					<tbody>
+		                <tr>
+		                    <th colspan="3"></th>
+		                    <th class="" colspan="">Total MRP:</th>
+		                    <th>{{order_product.total_amount}}</th>
+		                </tr>
+		                {% if coupon %}
+		            	<tr>
+		                    <th colspan="3"></th>
+		                    <th class="" colspan="">Apply Coupon</th>
+		                    <th>{{coupon.code}}</th>
+		                </tr>
+		                {% endif %}
+					</tbody>
+				</table>
+			</div>
+			{% if coupon %}
+			<div style="width: 35%;margin-left: auto;margin-right: auto;">
+				<p><strong>Save {{coupon.amount}} Rs</strong> On Applying Above Coupon Code and get your product only in :<strong>{{final_amount}} Rs</strong></p>
+				<h5> Expires On: {{coupon.valid_to}}</h5>
+				<form action="/payment/" class="col-2 " method="post">
+					{% csrf_token %}
+					<div class="row ">
+	                    <div class="col-md-12 form_field">
+	                        <div class="form-group health_form">
+							<input class="form-control" type="text" name='code' value="" placeholder="Enter coupon code here">
+	                        </div>
+	                    </div>
+	                </div>
+					<input type="submit" class="btn btn-success">
+				</form>
+			</div>
+			{% endif %}
+			{% else %}
+			<div style="width: 35%;margin-left: auto;margin-right: auto;" class="table-responsive cart_info">
+				<table class="table table-condensed">
+					<tbody>
+		                <tr>
+		                    <th colspan="3"></th>
+		                    <th class="" colspan="">Total MRP:</th>
+		                    <th>{{order_product.total_amount}}</th>
+		                    <!--<th>{{products|total_cart_price:request.session.cart}}</th>-->
+		                </tr>
+					</tbody>
+				</table>
+			</div>
+			{% endif %}
 			<div class="checkout_info" align="center" >
 				<div id="paypal-button-container"></div>
 				<script src="https://www.paypal.com/sdk/js?client-id={{client_id}}&currency=USD"></script>
 				    <script >
-				    	var amnt  = "{{products|total_cart_price:request.session.cart}}"
+				    	var amnt  = "{{order_product.total_amount}}"
 				    	var order_id  = "{{order.id}}"
 
 				    	function getCookie(name) {

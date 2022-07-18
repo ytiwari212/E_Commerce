@@ -166,7 +166,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
 
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
@@ -182,7 +184,13 @@ EMAIL_HOST_PASSWORD='BOA8LJdyGOzZrLcl3PcyCkh1aSpsRmEBOKmcmXvdew+i'
 # DEFAULT_FROM_EMAIL = 'shubham.thoughtwin@gmail.com'
 
 
-API_KEY="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"
+# API_KEY="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"
+API_KEY="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"
+
+
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": API_KEY,
+}
 
 LOGOUT_REDIRECT_URL = 'home/'
 

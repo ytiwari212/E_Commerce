@@ -1,0 +1,41 @@
+<html>
+    <body>
+        <br>
+
+        <h1>Hello {{ order.customer.username }}</h1>
+        <h2>Thank you for your order {{ order.product.name }}</h2>
+        <h3>Your Order ID: {{ order.id }}</h3>
+
+
+        <h3>
+            Contact Details:
+        </h3>
+        Email: {{ order.address }} <br/>
+        Phone: {{ order.phone }}
+
+        <h2>Order Details:</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <!--<th>Total Price</th>-->
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in order_product %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
+                        <!--<td>{{ item.total_price }}</td>-->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>

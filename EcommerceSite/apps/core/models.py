@@ -1,10 +1,8 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 
-# from django.contrib.auth import get_user_model
-
-# User = get_user_model()
 
 
 class User(AbstractUser):
@@ -76,17 +74,15 @@ class Order(models.Model):
 
     # product = models.ForeignKey(Product,on_delete=models.CASCADE)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    # quantity = models.IntegerField(default=1)
-    # price = models.IntegerField()
     date = models.DateField(default=datetime.datetime.today)
-    # status = models.BooleanField(default=False)
     status = models.CharField(max_length=25, choices=ORDER_STATUS)
     # transaction_id = models.CharField(max_length=25, default='', blank=True)
     address = models.CharField(max_length=50, default="", blank=True)
     phone = models.CharField(max_length=50, default="", blank=True)
+    apply_coupon= models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.customer}-{self.date}"
+        return f"ID:{self.id}----CUSTOMER:{self.customer}"
 
     def placeOrder(self):
         self.save()
@@ -96,11 +92,31 @@ class Order(models.Model):
         return Order.objects.filter(customer=customer_id).order_by("-date")
 
 
+class Coupon(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    code = models.CharField(max_length=15)
+    amount = models.FloatField()
+    valid_from = models.DateTimeField(null=True)
+    valid_to = models.DateTimeField(null=True)
+    max_value = models.IntegerField(validators=[MaxValueValidator(10)], verbose_name='Coupon Quantity', null=True) # No. of coupon
+    used = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.code}-{self.user.first_name}"
+
+
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     price = models.IntegerField(default=0)
+    total_amount = models.FloatField(null=True,blank=True)
+    coupon = models.ForeignKey(Coupon, related_name="order_coupon", on_delete=models.CASCADE, null=True)
+
 
     class Meta:
         unique_together = ("order", "product")
+
+
+
+
