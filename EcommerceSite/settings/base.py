@@ -40,6 +40,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -102,10 +103,10 @@ WSGI_APPLICATION = 'EcommerceSite.wsgi.application'
 DATABASES = {
   'default': {
       'ENGINE':   'django.db.backends.postgresql',
-      'NAME':     'ecommerce',
+      'NAME':     'postgres',
       'USER':     'postgres',
       'PASSWORD': 'postgres',
-      'HOST':     'localhost',
+      'HOST':     'db',
       'PORT':     5432,
   }
 }
