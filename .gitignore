@@ -3,5 +3,6 @@ media/
 collected_static/
 EcommerceSite/settings/local.py
 **/migrations
+.env
 
 

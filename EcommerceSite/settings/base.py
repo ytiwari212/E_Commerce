@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import environ
 import os, sys
 # from pathlib import Path
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 #setting ---------------------------------------------------------
@@ -32,10 +35,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-47r26=nuyq(84*gg!+5%%ip(qee4x-ffl#us0-89-b5^+b$8&q'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(env('DEBUG'))
 
 ALLOWED_HOSTS = []
 
@@ -100,13 +103,25 @@ WSGI_APPLICATION = 'EcommerceSite.wsgi.application'
 # }
 
 
+# DATABASES = {
+#   'default': {
+#       'ENGINE':   'django.db.backends.postgresql',
+#       'NAME':     'MyEshop',
+#       'USER':     'postgres',
+#       'PASSWORD': 'postgres',
+#       'HOST':     'localhost',
+#       'PORT':     5432,
+#   }
+# }
+
+# Old DB Normal setup
 DATABASES = {
   'default': {
       'ENGINE':   'django.db.backends.postgresql',
-      'NAME':     'postgres',
+      'NAME':     'ecommerce',
       'USER':     'postgres',
       'PASSWORD': 'postgres',
-      'HOST':     'db',
+      'HOST':     'localhost',
       'PORT':     5432,
   }
 }
@@ -147,6 +162,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = '/static/'
 
 MEDIA_ROOT = PROJECT_APPS.child('media')
 
@@ -186,7 +202,7 @@ EMAIL_HOST_PASSWORD='BOA8LJdyGOzZrLcl3PcyCkh1aSpsRmEBOKmcmXvdew+i'
 
 
 # API_KEY="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"
-API_KEY="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"
+API_KEY=env('API_KEY')
 
 
 ANYMAIL = {
@@ -199,6 +215,5 @@ PAYPAL_RECEIVER_EMAIL = 'youremail@mail.com'
 
 PAYPAL_TEST = True
 
-
-PAYPAL_CLIENT_ID = "ASILJdz-nMq6J9xxFYdCn37J7fsV-ibbnw10NWJaI9JgXtjTEPojrMB5_wnKwqd5Z6BG4Hf7qqig2u9e"
-PAYPAL_SECRET_KEY = "EMUweYiU8M2g749qAHPpjzCAFJ2eFmyY_6SLjtEFfXT4uKRkcf_mSai53nJp0aJJ7Pc7i5w6j6_edDXp"
+PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET_KEY = env('PAYPAL_SECRET_KEY')

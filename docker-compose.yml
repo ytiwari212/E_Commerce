@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
   db:
-    image: ecommercesite/repository:eshop
+    image: ecommercesite
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -20,3 +20,34 @@ services:
 volumes:
   postgres_data:
 
+# -------------------------------------------------------------------
+# version: '3'
+
+# services:
+#   django_gunicorn:
+#     volumes:
+#       - static:/static
+#     build:
+#       context: .
+#     ports:
+#       - "8000:8000"
+#   nginx:
+#     build: .
+#     volumes:
+#       - static:/static
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - django_gunicorn
+
+# volumes:
+#   static:
+
+
+
+
+
+# https://learndjango.com/tutorials/django-docker-and-postgresql-tutorial
+# python manage.py migrate
+# python manage.py collectstatic
+# gunicorn OnlineShopping.EcommerceSite.EcommerceSite
