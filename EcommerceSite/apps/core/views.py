@@ -25,7 +25,6 @@ today = datetime.date.today()
 
 class IndexView(View):
     def post(self, request):
-        breakpoint()
         # product = request.POST.get("product")
         cart_product = request.POST.get("cart_product")
         home_product = request.POST.get("home_product")
@@ -62,7 +61,6 @@ class IndexView(View):
         	return redirect("core:cart")
 
     def get(self, request):
-        breakpoint()
         return HttpResponseRedirect(f"products/{request.get_full_path()[1:]}")
 
 
@@ -157,7 +155,6 @@ class CartView(View):
 
 class CheckOut(View):
     def post(self, request):
-        breakpoint()
         address_type = request.POST.get('add')
         if address_type == "1":
         	address = request.user.address
@@ -218,7 +215,6 @@ class PaymentView(View):
         code = request.POST.get('code')
         if code:
             order = Order.objects.filter(customer=request.user).last()
-            breakpoint()
             coupon = Coupon.objects.filter(code__iexact=code, valid_from__lte=timezone.now(), valid_to__gte=timezone.now()).exclude(user=request.user,max_value__lte=F('used')).first()
             if not coupon:
                 messages.error(self.request, 'You can\'t use same coupon again, or coupon does not exist')
