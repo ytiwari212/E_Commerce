@@ -147,12 +147,11 @@ class LoginView(View):
 class CartView(View):
     def get(self, request):
         products = None
-
+        user = request.user
         cart = request.session.get("cart")
         if cart:
             ids = list(cart.keys())
             products = Product.get_products_by_id(ids)
-            user = request.user
         return render(request, "cart.html", {"products": products,'user':user})
 
 
